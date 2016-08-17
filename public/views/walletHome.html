@@ -482,6 +482,27 @@
           </form>
         </div>
       </div>
+      <div class="row m20t">
+        <div class="large-12 large-centered columns">
+          <form name="ticketPurchaseForm"   novalidate>
+	      <div class="input">
+                <input ng-show="sendForm.address.$invalid" class="m0" type="text" id="address" name="address" ng-disabled=" home.lockAddress" ng-attr-placeholder="{{'Decred address'|translate}}" ng-model="_address" valid-address required ng-focus="home.formFocus('address')" ng-blur="home.formFocus(false)">
+                <div class="addressbook-input" ng-show="!sendForm.address.$invalid && _address">
+                  {{index.addressbook[_address] || _address}}
+                </div>
+                <a class="postfix size-12 m0 text-gray"
+                ng-style="{'color':index.backgroundColor}"
+                ng-click="home.openAddressbookModal(index.otherWallets, _address)">
+                  <i class="icon-wallet text-bold size-18"></i>
+                </a>
+              </div>
+                <button class="button black round expand" ng-disabled="sendForm.$invalid || home.paymentExpired || index.updating"
+                  ng-style="{'background-color':index.backgroundColor}" ng-click="home.submitForm()" translate>
+                  Send
+                </button>
+          </form>
+	</div>
+      </div>
       <div class="extra-margin-bottom"></div>
     </div> <!-- END Send -->
 

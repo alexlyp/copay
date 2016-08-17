@@ -486,20 +486,41 @@
         <div class="large-12 large-centered columns">
           <form name="ticketPurchaseForm"   novalidate>
 	      <div class="input">
-                <input ng-show="sendForm.address.$invalid" class="m0" type="text" id="address" name="address" ng-disabled=" home.lockAddress" ng-attr-placeholder="{{'Decred address'|translate}}" ng-model="_address" valid-address required ng-focus="home.formFocus('address')" ng-blur="home.formFocus(false)">
-                <div class="addressbook-input" ng-show="!sendForm.address.$invalid && _address">
-                  {{index.addressbook[_address] || _address}}
+                <input ng-show="ticketPurchaseForm.ticketAddress.$invalid" class="m0" type="text" id="ticketAddress" name="ticketAddress" ng-disabled=" home.lockTicketAddress" ng-attr-placeholder="{{'Ticket address'|translate}}" ng-model="_ticketAddress" valid-address required ng-focus="home.formFocus('ticketAddress')" ng-blur="home.formFocus(false)">
+                <div class="addressbook-input" ng-show="!ticketPurchaseForm.ticketAddress.$invalid && _ticketAddress">
+                  {{index.addressbook[_ticketAddress] || _ticketAddress}}
                 </div>
                 <a class="postfix size-12 m0 text-gray"
                 ng-style="{'color':index.backgroundColor}"
-                ng-click="home.openAddressbookModal(index.otherWallets, _address)">
+                ng-click="home.openAddressbookModal(index.otherWallets, _ticketAddress)">
                   <i class="icon-wallet text-bold size-18"></i>
                 </a>
               </div>
+	      <div class="input">
+                <input ng-show="ticketPurchaseForm.poolAddress.$invalid" class="m0" type="text" id="poolAddress" name="poolAddress" ng-disabled=" home.lockPoolAddress" ng-attr-placeholder="{{'Pool address'|translate}}" ng-model="_poolAddress" valid-address required ng-focus="home.formFocus('poolAddress')" ng-blur="home.formFocus(false)">
+                <div class="addressbook-input" ng-show="!ticketPurchaseForm.poolAddress.$invalid && _poolAddress">
+                  {{index.addressbook[_poolAddress] || _poolAddress}}
+                </div>
+                <a class="postfix size-12 m0 text-gray"
+                ng-style="{'color':index.backgroundColor}"
+                ng-click="home.openAddressbookModal(index.otherWallets, _poolAddress)">
+                  <i class="icon-wallet text-bold size-18"></i>
+                </a>
+              </div>
+              <div class="input">
+                <input type="number" id="poolFee" ng-disabled=" home.lockPoolFee" name="poolFee" ng-attr-placeholder="{{'Pool fee'|translate}} {{home.unitName}}" ng-model="_poolFee" valid-amount required autocomplete="off" ng-focus="home.formFocus('poolFee')" ng-blur="home.formFocus(false)">
+              </div>
+            <div class="row">
+              <div class="large-6 medium-6 small-6 columns" ng-show="(home._paypro || home.lockAddress || home.lockAmount)">
+                <a ng-click="home.resetForm(sendForm)" class="button expand outline dark-gray round" translate>Cancel</a>
+              </div>
+              <div class="large-6 medium-6 small-6 columns" ng-show="(home._paypro || home.lockAddress || home.lockAmount)">
                 <button class="button black round expand" ng-disabled="sendForm.$invalid || home.paymentExpired || index.updating"
-                  ng-style="{'background-color':index.backgroundColor}" ng-click="home.submitForm()" translate>
+                  ng-style="{'background-color':index.backgroundColor}" ng-click="home.ticketForm()" translate>
                   Send
                 </button>
+              </div>
+            </div>
           </form>
 	</div>
       </div>

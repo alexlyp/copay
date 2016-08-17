@@ -485,8 +485,24 @@
       <div class="row m20t">
         <div class="large-12 large-centered columns">
           <form name="ticketPurchaseForm"   novalidate>
+
+	      <div class="row collapse">
+                <label for="ticketAddress" class="left" >
+                  <span translate>Ticket address</span>
+                </label>
+                <span ng-hide="ticketPurchaseForm.ticketAddress.$pristine">
+                  <span class="has-error right size-12" ng-show="ticketPurchaseForm.ticketAddress.$invalid && _ticketAddress">
+                    <i class="icon-close-circle size-14"></i>
+                    <span class="vm" translate>Not valid</span>
+                  </span>
+                  <small class="right text-primary" ng-show="!ticketPurchaseForm.ticketAddress.$invalid">
+                    <i class="icon-checkmark-circle size-14"></i>
+                  </small>
+                </span>
+              </div>
+
 	      <div class="input">
-                <input ng-show="ticketPurchaseForm.ticketAddress.$invalid" class="m0" type="text" id="ticketAddress" name="ticketAddress" ng-disabled=" home.lockTicketAddress" ng-attr-placeholder="{{'Ticket address'|translate}}" ng-model="_ticketAddress" valid-address required ng-focus="home.formFocus('ticketAddress')" ng-blur="home.formFocus(false)">
+                <input ng-show="ticketPurchaseForm.ticketAddress.$invalid" class="m0" type="text" id="ticketAddress" name="ticketAddress" ng-disabled=" home.lockTicketAddress" ng-attr-placeholder="{{'Address to give voting rights'|translate}}" ng-model="_ticketAddress" valid-address required ng-focus="home.formFocus('ticketAddress')" ng-blur="home.formFocus(false)">
                 <div class="addressbook-input" ng-show="!ticketPurchaseForm.ticketAddress.$invalid && _ticketAddress">
                   {{index.addressbook[_ticketAddress] || _ticketAddress}}
                 </div>
@@ -496,8 +512,24 @@
                   <i class="icon-wallet text-bold size-18"></i>
                 </a>
               </div>
+
+              <div class="row collapse">
+                <label for="address" class="left" >
+                  <span translate>Pool address</span>
+                </label>
+                <span ng-hide="ticketPurchaseForm.address.$pristine">
+                  <span class="has-error right size-12" ng-show="ticketPurchaseForm.poolAddress.$invalid && _poolAddress">
+                    <i class="icon-close-circle size-14"></i>
+                    <span class="vm" translate>Not valid</span>
+                  </span>
+                  <small class="right text-primary" ng-show="!ticketPurchaseForm.poolAddress.$invalid">
+                    <i class="icon-checkmark-circle size-14"></i>
+                  </small>
+                </span>
+              </div>
+
 	      <div class="input">
-                <input ng-show="ticketPurchaseForm.poolAddress.$invalid" class="m0" type="text" id="poolAddress" name="poolAddress" ng-disabled=" home.lockPoolAddress" ng-attr-placeholder="{{'Pool address'|translate}}" ng-model="_poolAddress" valid-address required ng-focus="home.formFocus('poolAddress')" ng-blur="home.formFocus(false)">
+                <input ng-show="ticketPurchaseForm.poolAddress.$invalid" class="m0" type="text" id="poolAddress" name="poolAddress" ng-disabled=" home.lockPoolAddress" ng-attr-placeholder="{{'Pool address to send pool fee'|translate}}" ng-model="_poolAddress" valid-address required ng-focus="home.formFocus('poolAddress')" ng-blur="home.formFocus(false)">
                 <div class="addressbook-input" ng-show="!ticketPurchaseForm.poolAddress.$invalid && _poolAddress">
                   {{index.addressbook[_poolAddress] || _poolAddress}}
                 </div>
@@ -508,14 +540,14 @@
                 </a>
               </div>
               <div class="input">
-                <input type="number" id="poolFee" ng-disabled=" home.lockPoolFee" name="poolFee" ng-attr-placeholder="{{'Pool fee'|translate}} {{home.unitName}}" ng-model="_poolFee" valid-amount required autocomplete="off" ng-focus="home.formFocus('poolFee')" ng-blur="home.formFocus(false)">
+                <input type="number" id="poolFee" ng-disabled=" home.lockPoolFee" name="poolFee" ng-attr-placeholder="{{'Pool fee percent'|translate}} {{home.unitName}}" ng-model="_poolFee" valid-amount required autocomplete="off" ng-focus="home.formFocus('poolFee')" ng-blur="home.formFocus(false)">
               </div>
             <div class="row">
-              <div class="large-6 medium-6 small-6 columns" ng-show="(home._paypro || home.lockAddress || home.lockAmount)">
-                <a ng-click="home.resetForm(sendForm)" class="button expand outline dark-gray round" translate>Cancel</a>
+              <div class="large-6 medium-6 small-6 columns">
+                <a ng-click="home.resetTicketPurchaseForm(ticketPurchaseForm)" class="button expand outline dark-gray round" translate>Cancel</a>
               </div>
-              <div class="large-6 medium-6 small-6 columns" ng-show="(home._paypro || home.lockAddress || home.lockAmount)">
-                <button class="button black round expand" ng-disabled="sendForm.$invalid || home.paymentExpired || index.updating"
+              <div class="large-6 medium-6 small-6 columns">
+                <button class="button black round expand" ng-disabled="ticketPurchaseForm.$invalid || index.updating"
                   ng-style="{'background-color':index.backgroundColor}" ng-click="home.ticketForm()" translate>
                   Send
                 </button>

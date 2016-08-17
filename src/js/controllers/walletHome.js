@@ -477,6 +477,90 @@ angular.module('copayApp.controllers').controller('walletHomeController', functi
     }, 100);
   };
 
+  this.ticketForm = function() {
+    if (!$scope._ticketAddress || !$scope._) return;
+    var client = profileService.focusedClient;
+    var unitToSat = this.unitToSatoshi;
+    var currentSpendUnconfirmed = configWallet.spendUnconfirmed;
+
+    var outputs = [];
+
+    this.resetError();
+
+    if (isCordova && this.isWindowsPhoneApp) {
+      this.hideAddress = false;
+      this.hideAmount = false;
+    }
+
+    var form = $scope.sendForm;
+    var comment = form.comment.$modelValue;
+
+    // ToDo: use a credential's (or fc's) function for this
+    if (comment && !client.credentials.sharedEncryptingKey) {
+      var msg = 'Could not add message to imported wallet without shared encrypting key';
+      $log.warn(msg);
+      return self.setSendError(gettext(msg));
+    }
+
+    if (form.amount.$modelValue * unitToSat >  Number.MAX_SAFE_INTEGER) {
+      var msg = 'Amount too big';
+      $log.warn(msg);
+      return self.setSendError(gettext(msg));
+    };
+
+      var paypro = self._paypro;
+      var address, amount;
+
+      address = form.address.$modelValue;
+      amount = parseInt((form.amount.$modelValue * unitToSat).toFixed(0));
+
+      outputs.push({
+        'toAddress': address,
+        'amount': amount,
+        'message': comment
+      });
+
+      var txp = {};
+
+      if (!lodash.isEmpty(self.sendMaxInfo)) {
+        txp.sendMax = true;
+        txp.inputs = self.sendMaxInfo.inputs;
+        txp.fee = self.sendMaxInfo.fee;
+      } else {
+        txp.amount = amount;
+      }
+
+      txp.toAddress = address;
+      txp.outputs = outputs;
+      txp.message = comment;
+      txp.payProUrl = paypro ? paypro.url : null;
+      txp.excludeUnconfirmedUtxos = configWallet.spendUnconfirmed ? false : true;
+      txp.feeLevel = walletSettings.feeLevel || 'normal';
+
+      ongoingProcess.set('creatingTx', true);
+      walletService.createTx(client, txp, function(err, createdTxp) {
+        ongoingProcess.set('creatingTx', false);
+        if (err) {
+          return self.setSendError(err);
+        }
+
+        if (!client.canSign() && !client.isPrivKeyExternal()) {
+          $log.info('No signing proposal: No private key');
+          self.resetForm();
+          var type = txStatus.notify(createdTxp);
+          $scope.openStatusModal(type, createdTxp, function() {
+            return $scope.$emit('Local/TxProposalAction');
+          });
+        } else {
+          $rootScope.$emit('Local/NeedsConfirmation', createdTxp, function(accept) {
+            if (accept) self.confirmTx(createdTxp);
+            else self.resetForm();
+          });
+        }
+
+    }, 100);
+  };
+
   this.confirmTx = function(txp) {
     var client = profileService.focusedClient;
     var self = this;
@@ -617,6 +701,38 @@ angular.module('copayApp.controllers').controller('walletHomeController', functi
         form.address.$pristine = true;
         form.address.$setViewValue('');
         form.address.$render();
+      }
+    }
+    $timeout(function() {
+      $rootScope.$digest();
+    }, 1);
+  };
+
+  this.resetTicketPurchaseForm = function() {
+    this.resetError();
+
+    this.lockPoolAddress = false;
+    this.lockTicketAddress = false;
+
+    this._poolAddress = this._ticketAddress = null;
+    this._poolFee = null;
+
+    var form = $scope.ticketPurchaseForm;
+
+    if (form && form.poolFee) {
+      form.poolFee.$pristine = true;
+      form.poolFee.$setViewValue('');
+      form.poolFee.$render();
+
+      if (form.ticketAddress) {
+        form.ticketAddress.$pristine = true;
+        form.ticketAddress.$setViewValue('');
+        form.ticketAddress.$render();
+      }
+      if (form.poolAddress) {
+        form.poolAddress.$pristine = true;
+        form.poolAddress.$setViewValue('');
+        form.poolAddress.$render();
       }
     }
     $timeout(function() {
